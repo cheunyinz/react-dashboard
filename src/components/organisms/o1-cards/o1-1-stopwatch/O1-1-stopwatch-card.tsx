@@ -18,9 +18,6 @@ const O1Stopwatch: React.FC<O1StopwatchProps> = ({ metaData}) => {
     <li className='project-card'>
       <M1MetaData {...metaData} />
       <StopwatchLogic />
-
-    
-
     </li>
   );
 };

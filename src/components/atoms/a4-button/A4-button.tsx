@@ -3,7 +3,7 @@ import React from 'react';
 
 export type A4ButtonProps = {
   text: string;
-  id: string;
+  id?: string;
   state: 'selected' | 'disabled' |'default';
   onClick?: () => void;
 };

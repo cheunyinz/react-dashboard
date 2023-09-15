@@ -10,6 +10,10 @@ import O1Clock, {
   O1ClockProps,
 } from "./components/organisms/o1-cards/o1-2-clock/O1-2-clock-card";
 
+import O1Prices, {
+  O1PricesProps,
+} from "./components/organisms/o1-cards/o1-3-prices/O1-3-prices-card";
+
 const App: React.FC = () => {
   const headingMeta: A1HeadingProps = {
     text: "CYZ React Dashboard",
@@ -41,6 +45,17 @@ const App: React.FC = () => {
     },
   };
 
+  const pricesMeta: O1PricesProps = {
+    metaData: {
+      headingText: "Prices",
+      headingColor: "blue",
+      headingSize: "small",
+      headingLevel: "h2",
+      alignment: "center",
+      date: "09-2023",
+    },
+  };
+
   return (
     <>
       <header>
@@ -50,6 +65,7 @@ const App: React.FC = () => {
         <ol className="projects">
           <O1Stopwatch {...stopwatchMeta} />
           <O1Clock {...clockMeta} />
+          <O1Prices {...pricesMeta} />
         </ol>
       </main>
     </>

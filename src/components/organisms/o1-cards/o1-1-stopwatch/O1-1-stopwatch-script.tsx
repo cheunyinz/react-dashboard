@@ -75,11 +75,11 @@ const StopwatchLogic: React.FC = () => {
     return value < 10 ? '0' + value : value;
   };
 
-//   const buttonState = stopwatchRunning
-//   ? 'disabled'
-//   : milSeconds === 0
-//   ? 'default'
-//   : 'default';
+  const buttonState = stopwatchRunning
+  ? 'disabled'
+  : milSeconds === 0
+  ? 'default'
+  : 'default';
 
   // Define the buttons with their handlers, states and IDs
   const buttons: M2ButtonsGroupProps = {

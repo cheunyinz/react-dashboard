@@ -83,7 +83,7 @@ const ClockLogic: React.FC = () => {
   useEffect(() => {
     return () => {
       if (clockInterval.current) {
-        clearInterval(clockInterval.current); // Clean up the interval on unmount
+        clearInterval(clockInterval.current); 
       }
     };
   }, []);
