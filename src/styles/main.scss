@@ -1,0 +1,119 @@
+@import url(./bundle.scss);
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --chathams-blue: #134187;
+  --quarter-pearl-lusta: #fffdf4;
+  --ghost: #c9cad1;
+
+  --primary-color: var(--chathams-blue);
+  --secondary-color: var(--quarter-pearl-lusta);
+  --selected-btn-color: var(--ghost);
+
+  --font-size-sm: 0.75rem;
+  --font-size-md: 1rem;
+  --font-size-lg: 1.5rem;
+  --font-size-xl: 2rem;
+}
+
+img,
+picture {
+  max-width: 100%;
+  display: block;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  text-rendering: optimizespeed;
+  line-height: 1.6;
+  background-color: var(--primary-color);
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 500;
+  color: var(--secondary-color);
+}
+
+p,
+a,
+time,
+button {
+  font-family: "Karla", sans-serif;
+  color: var(--secondary-color);
+}
+
+body {
+  > div {
+    padding-inline: 2rem;
+    max-width: 80rem;
+    margin: auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    min-height: 100svh;
+  }
+}
+
+header {
+  margin-top: 8rem;
+  margin-bottom: 3rem;
+}
+
+main {
+  margin-bottom: 3rem;
+}
+
+.projects {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+  gap: 1rem;
+}
+
+footer {
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
+  font-family: "Karla", sans-serif;
+  gap: 0.25rem;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem;
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-inline: -50vw;
+  margin-top: auto;
+}
+
+footer a {
+  color: var(--primary-color);
+  text-decoration: none;
+}

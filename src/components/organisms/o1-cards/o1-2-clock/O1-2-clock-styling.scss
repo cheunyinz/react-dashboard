@@ -1,0 +1,38 @@
+.clock {
+  display: grid;
+  place-content: center;
+  flex-grow: 2;
+
+  &__container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  &__container > * {
+    color: var(--primary-color);
+    position: relative;
+  }
+  &__time {
+    font-size: 2rem;
+    padding-block: 0.5rem;
+    margin-left: 2rem;
+    width: 7rem;
+  }
+  &__time-name {
+    margin-left: 1rem;
+    display: flex;
+    align-items: center;
+
+    &::after {
+      content: "";
+      display: block;
+      width: 1rem;
+      height: 0.75rem;
+      margin-left: 0.5rem;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-image: var(--background-image-url, url(""));
+    }
+  }
+}

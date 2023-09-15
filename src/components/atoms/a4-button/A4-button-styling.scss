@@ -1,0 +1,17 @@
+.project-card__button {
+  appearance: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem 0.75rem;
+  border-radius: 3px;
+  color: var(--primary-color);
+
+  &--disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  &--selected {
+    background-color: var(--selected-btn-color);
+  }
+}
