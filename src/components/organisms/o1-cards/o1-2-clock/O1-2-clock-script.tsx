@@ -8,7 +8,7 @@ const ClockLogic: React.FC = () => {
   const [selectedButton, setSelectedButton] = useState<string | null>(null);
   const [formattedTime, setFormattedTime] = useState<string>("");
   const [timezoneName, setTimezoneName] = useState<string>("");
-  let clockInterval = useRef<NodeJS.Timeout | null>(null);
+  let clockInterval = useRef<ReturnType<typeof setInterval> | null>(null);
   const runClockTime = (timeZone: string, timeZoneName: string) => {
     let options: any;
 
