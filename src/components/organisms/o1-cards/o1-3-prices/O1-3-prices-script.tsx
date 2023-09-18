@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
+import A2Text from "../../../atoms/a2-text/A2-text";
+import A5Link from "../../../atoms/a5-link/A5-link";
 
 const PriceLogic: React.FC = () => {
   const [productPrice, setProductPrice] = useState<string | null>(null);
+  const manfieldUrl: string =
+    "https://www.manfield.com/heren/witte-leren-sneakers-1168040.html";
 
   const fetchData = async () => {
     try {
@@ -11,7 +15,7 @@ const PriceLogic: React.FC = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          url: "https://www.manfield.com/heren/witte-leren-sneakers-1168040.html",
+          url: `${manfieldUrl}`,
         }),
       });
 
@@ -33,9 +37,17 @@ const PriceLogic: React.FC = () => {
   return (
     <section className="price">
       {productPrice !== null ? (
-        <p>Manfield Schoenen: {productPrice}</p>
+        <A5Link
+          text={`Manfield Schoenen: €${productPrice}`}
+          link={`${manfieldUrl}`}
+        />
       ) : (
-        <p>Loading...</p>
+        <A2Text
+          text={"Loading... "}
+          color={"blue"}
+          size="medium"
+          alignment="center"
+        />
       )}
     </section>
   );

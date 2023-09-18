@@ -1,3 +1,26 @@
-.test {
-  visibility: hidden;
+@import url(/src/styles/main.scss);
+
+.text {
+  font-weight: normal;
+  font-family: "Karla", sans-serif;
+
+  &--medium {
+    font-size: var(--font-size-md);
+  }
+
+  &--small {
+    font-size: var(--font-size-sm);
+  }
+
+  &--white {
+    color: var(--secondary-color);
+  }
+
+  &--blue {
+    color: var(--primary-color);
+  }
+
+  &--center {
+    text-align: center;
+  }
 }

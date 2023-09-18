@@ -1,4 +1,7 @@
 .price {
+  display: grid;
+  place-content: center;
+  height: 100%;
   p {
     color: var(--primary-color);
   }

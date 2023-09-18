@@ -4,10 +4,10 @@ import M1MetaData, {
 } from "../../../molecules/m1-meta-data/M1-meta-data";
 import PriceLogic from "./O1-3-prices-script";
 
-export type O1PriceProps = {
+export type O1PricesProps = {
   metaData: M1MetaDataProps;
 };
-export const O1Price: React.FC<O1PriceProps> = ({ metaData }) => {
+export const O1Price: React.FC<O1PricesProps> = ({ metaData }) => {
   return (
     <li className="project-card">
       <M1MetaData {...metaData} />
@@ -17,3 +17,4 @@ export const O1Price: React.FC<O1PriceProps> = ({ metaData }) => {
 };
 
 export default O1Price;
+

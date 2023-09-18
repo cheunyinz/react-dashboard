@@ -20,14 +20,11 @@ def get_product_price():
         return jsonify({"error": "Invalid request"}), 400
 
 
-def scrape_product_price(url):
-    response = requests.get(url)
+def scrape_product_price(product_url):
+    response = requests.get(product_url)
     soup = BeautifulSoup(response.text, "html.parser")
 
-    # Find the div with id "detail-container"
     detail_container = soup.find("div", id="detail-container")
-
-    # Extract the price from the data-googleproduct attribute
     google_product_data = detail_container.get("data-googleproduct", {})
     product_price = ""
     if google_product_data:

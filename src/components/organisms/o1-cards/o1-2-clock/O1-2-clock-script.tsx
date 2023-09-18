@@ -9,7 +9,7 @@ const ClockLogic: React.FC = () => {
   const [formattedTime, setFormattedTime] = useState<string>("");
   const [timezoneName, setTimezoneName] = useState<string>("");
   const [countryflag, setCountryflag] = useState<string>("");
-  let clockInterval = useRef<number | null>(null);
+  let clockInterval = useRef<NodeJS.Timeout | null>(null);
   const runClockTime = (timeZone: string, timeZoneName: string) => {
     let options: any;
 
@@ -35,7 +35,6 @@ const ClockLogic: React.FC = () => {
   const changeClockButtonState = (
     timeZone: string,
     timeZoneName: string
-    // state: string
   ) => {
     setSelectedButton(timeZone);
     runClockTime(timeZone, timeZoneName);
@@ -83,7 +82,7 @@ const ClockLogic: React.FC = () => {
   useEffect(() => {
     return () => {
       if (clockInterval.current) {
-        clearInterval(clockInterval.current); 
+        clearInterval(clockInterval.current);
       }
     };
   }, []);
