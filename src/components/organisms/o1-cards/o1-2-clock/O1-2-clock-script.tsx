@@ -8,7 +8,6 @@ const ClockLogic: React.FC = () => {
   const [selectedButton, setSelectedButton] = useState<string | null>(null);
   const [formattedTime, setFormattedTime] = useState<string>("");
   const [timezoneName, setTimezoneName] = useState<string>("");
-  const [countryflag, setCountryflag] = useState<string>("");
   let clockInterval = useRef<NodeJS.Timeout | null>(null);
   const runClockTime = (timeZone: string, timeZoneName: string) => {
     let options: any;
@@ -25,17 +24,12 @@ const ClockLogic: React.FC = () => {
     clockInterval.current = setInterval(() => {
       let formattedTime: string = new Date().toLocaleTimeString([], options);
       let timezoneName: string = timeZoneName;
-      let countryflag: string = `url('/assets/icons/clock/${timeZoneName}.svg`;
       setFormattedTime(formattedTime);
       setTimezoneName(timezoneName);
-      setCountryflag(countryflag);
     }, 10);
   };
 
-  const changeClockButtonState = (
-    timeZone: string,
-    timeZoneName: string
-  ) => {
+  const changeClockButtonState = (timeZone: string, timeZoneName: string) => {
     setSelectedButton(timeZone);
     runClockTime(timeZone, timeZoneName);
   };
@@ -68,10 +62,6 @@ const ClockLogic: React.FC = () => {
         onClick: () => changeClockButtonState("ROK", "KOR"),
       },
     ],
-  };
-
-  const clockTimeFlag = {
-    "--background-image-url": `url(${countryflag})`,
   };
 
   useEffect(() => {
