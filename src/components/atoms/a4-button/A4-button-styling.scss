@@ -11,7 +11,8 @@
     pointer-events: none;
   }
 
-  &--selected {
+  &--selected,
+  &:hover {
     background-color: var(--selected-btn-color);
   }
 }

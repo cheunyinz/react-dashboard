@@ -9,18 +9,15 @@ const PriceLogic: React.FC = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch(
-        "https://cyz-react-dashboard.netlify.app/price",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            url: `${manfieldUrl}`,
-          }),
-        }
-      );
+      const response = await fetch("http://localhost:5000/price", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          url: `${manfieldUrl}`,
+        }),
+      });
 
       if (!response.ok) {
         throw new Error("Failed to fetch data");
@@ -43,6 +40,7 @@ const PriceLogic: React.FC = () => {
         <A5Link
           text={`Manfield Schoenen: €${productPrice}`}
           link={`${manfieldUrl}`}
+          target="_blank"
         />
       ) : (
         <A2Text
