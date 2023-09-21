@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, RefObject } from "react";
+import { useState, useRef, useEffect } from "react";
 import A6Image, { A6ImageProps } from "../../../atoms/a6-image/A6-image";
 import M2ButtonsGroup, {
   M2ButtonsGroupProps,
@@ -12,9 +12,9 @@ const Carousel = ({ imageData }: { imageData: A6ImageProps[] }) => {
   const [pressedState, setPressedState] = useState(false);
   const [offset, setOffset] = useState(0);
   const [extraOffset, setExtraOffset] = useState(0);
-  const [startXpos, setStartXPos] = useState(0);
+  const [startMouseXpos, setStartXPos] = useState(0);
   const [currentMouseX, setCurrentMouseX] = useState(0);
-  const [sliderXPos, setSliderxPos] = useState(0);
+  const [transition, setTransition] = useState(false);
   useEffect(() => {
     const handleResize = () => {
       const carouselElement = carouselRef.current;
@@ -37,7 +37,6 @@ const Carousel = ({ imageData }: { imageData: A6ImageProps[] }) => {
       activeIndex === 0 ? imageData.length - 1 : activeIndex - 1;
     setActiveIndex(newActiveIndex);
     setOffset(newActiveIndex * -imageWidthValue);
-    console.log(activeIndex, "THE PREV INDEX");
   };
 
   const nextImage = () => {
@@ -45,33 +44,32 @@ const Carousel = ({ imageData }: { imageData: A6ImageProps[] }) => {
       activeIndex === imageData.length - 1 ? 0 : activeIndex + 1;
     setActiveIndex(newActiveIndex);
     setOffset(newActiveIndex * -imageWidthValue);
-    console.log(activeIndex, "THE NEXT INDEX");
   };
 
   const enterSlider = () => {
-    // setPressedState(true);
     if (carouselRef.current) {
       carouselRef.current.style.cursor = "grab";
     }
   };
-  const pressingSlider = (e: any, outerCarousel: any, innerCarousel: any) => {
+  const pressingSlider = (e: any) => {
     setPressedState(true);
     if (carouselRef.current) {
       carouselRef.current.style.cursor = "grabbing";
     }
 
+    let element = document.querySelector(".carousel__list");
+    element.classList.remove("carousel__list--animation");
     setStartXPos(e.clientX);
-    console.log(startXpos, " startpoint");
   };
 
-  const dragSlider = (e: any, outerCarousel: any) => {
+  const dragSlider = (e: any) => {
     if (pressedState === false) return;
 
     let current = e.clientX;
+    let newCurrentMouseX = current - startMouseXpos;
 
-    setCurrentMouseX(current - startXpos);
-
-    setExtraOffset(activeIndex * imageWidthValue + currentMouseX);
+    setCurrentMouseX(newCurrentMouseX);
+    setExtraOffset(newCurrentMouseX);
   };
 
   const unpressSlider = () => {
@@ -79,24 +77,32 @@ const Carousel = ({ imageData }: { imageData: A6ImageProps[] }) => {
       carouselRef.current.style.cursor = "grab";
     }
     setPressedState(false);
+
     const newActiveIndex = Math.round(
-      (activeIndex * imageWidthValue + currentMouseX) / -imageWidthValue
+      (activeIndex * -imageWidthValue + currentMouseX) / -imageWidthValue
     );
-    setExtraOffset(0);
+
+    let element = document.querySelector(".carousel__list");
+    element.classList.add("carousel__list--animation");
+
     setActiveIndex(newActiveIndex);
     setOffset(newActiveIndex * -imageWidthValue);
-    console.log(newActiveIndex);
+    setExtraOffset(0);
   };
 
   const exitSlider = () => {
     if (pressedState === false) return;
     setPressedState(false);
     const newActiveIndex = Math.round(
-      (activeIndex * imageWidthValue + currentMouseX) / -imageWidthValue
+      (activeIndex * -imageWidthValue + currentMouseX) / -imageWidthValue
     );
-    setExtraOffset(0);
+
+    let element = document.querySelector(".carousel__list");
+    element.classList.add("carousel__list--animation");
+
     setActiveIndex(newActiveIndex);
     setOffset(newActiveIndex * -imageWidthValue);
+    setExtraOffset(0);
   };
 
   const buttons: M2ButtonsGroupProps["buttons"] = [
@@ -111,23 +117,22 @@ const Carousel = ({ imageData }: { imageData: A6ImageProps[] }) => {
       onClick: () => nextImage(),
     },
   ];
-  console.log(activeIndex, "THE ACTIVE INDEX");
+  console.log(transition);
+
   return (
     <div className="carousel">
       <div
         className="carousel__container"
         onMouseEnter={enterSlider}
-        onMouseDown={(e) =>
-          pressingSlider(e, carouselRef.current, carouseInnerRef.current)
-        }
-        onMouseMove={(e) => dragSlider(e, carouselRef.current)}
+        onMouseDown={(e) => pressingSlider(e)}
+        onMouseMove={(e) => dragSlider(e)}
         onMouseUp={unpressSlider}
         onMouseLeave={exitSlider}
         ref={carouselRef}
       >
         <ul
           ref={carouseInnerRef}
-          className="carousel__list"
+          className="carousel__list carousel__list--animation "
           style={{
             transform: `translate3d(${offset + extraOffset}px, 0,0)`,
           }}
@@ -140,7 +145,7 @@ const Carousel = ({ imageData }: { imageData: A6ImageProps[] }) => {
         </ul>
       </div>
       <M2ButtonsGroup buttons={buttons} />
-      <p className="currentPos">{currentMouseX}</p>
+      <p className="currentPos">{offset + extraOffset}</p>
     </div>
   );
 };
