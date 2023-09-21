@@ -5,7 +5,10 @@
   }
   &__list {
     display: flex;
-    // transition: ease-in 0.3s;
+
+    &--animation {
+      transition: ease-in 0.3s;
+    }
   }
 
   &__item {
