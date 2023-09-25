@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, MouseEvent } from "react";
+import { debounce } from "lodash";
 import A6Image, { A6ImageProps } from "../../../atoms/a6-image/A6-image";
 import M2ButtonsGroup, {
   M2ButtonsGroupProps,
@@ -10,27 +11,48 @@ const Carousel = ({ imageData }: { imageData: A6ImageProps[] }) => {
   const [imageWidthValue, setImageWidthValue] = useState(0);
   const [activeIndex, setActiveIndex] = useState(0);
   const [pressedState, setPressedState] = useState(false);
-  const [offset, setOffset] = useState(0);
-  const [extraOffset, setExtraOffset] = useState(0);
   const [sliderOffset, setSliderOffset] = useState(0);
   const [startMouseX, setStartXPos] = useState(0);
   const [currentMouseX, setCurrentMouseX] = useState(0);
+
+  const toggleTransisationStyling = debounce(() => {
+    console.log(" not resizing debounced");
+    let element = document.querySelector(".carousel__list");
+
+    if (!element) {
+      return;
+    } else element.classList.add("carousel__list--animation");
+  }, 300);
+
   useEffect(() => {
-    const handleResize = () => {
+    const getImageWidthValue = () => {
       const carouselElement = carouselRef.current;
       const carouselInnerElement = carouseInnerRef.current;
       if (carouselElement && carouselInnerElement) {
         const width = carouselElement.getBoundingClientRect().width;
         setImageWidthValue(Number(width.toFixed(2)));
-        setOffset(activeIndex * -Number(width.toFixed(2)));
+        setSliderOffset(activeIndex * -Number(width.toFixed(2)));
       }
     };
 
-    handleResize();
+    const handleResize = () => {
+      getImageWidthValue();
+      let element = document.querySelector(".carousel__list");
+
+      if (!element) {
+        return;
+      } else element.classList.remove("carousel__list--animation");
+
+      console.log("resize");
+    };
+
+    getImageWidthValue();
     window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", toggleTransisationStyling);
 
     return () => {
       window.removeEventListener("resize", handleResize);
+      window.removeEventListener("resize", toggleTransisationStyling);
     };
   }, [activeIndex]);
 
@@ -42,7 +64,7 @@ const Carousel = ({ imageData }: { imageData: A6ImageProps[] }) => {
     let newActiveIndex =
       activeIndex === 0 ? imageData.length - 1 : activeIndex - 1;
     setActiveIndex(newActiveIndex);
-    setOffset(newActiveIndex * -imageWidthValue);
+    setSliderOffset(newActiveIndex * -imageWidthValue);
   };
 
   const nextImage = () => {
@@ -53,7 +75,7 @@ const Carousel = ({ imageData }: { imageData: A6ImageProps[] }) => {
     let newActiveIndex =
       activeIndex === imageData.length - 1 ? 0 : activeIndex + 1;
     setActiveIndex(newActiveIndex);
-    setOffset(newActiveIndex * -imageWidthValue);
+    setSliderOffset(newActiveIndex * -imageWidthValue);
   };
 
   const enterSlider = () => {
@@ -61,7 +83,7 @@ const Carousel = ({ imageData }: { imageData: A6ImageProps[] }) => {
       carouselRef.current.style.cursor = "grab";
     }
   };
-  const pressingSlider = (e: any) => {
+  const pressingSlider = (event: MouseEvent) => {
     setPressedState(true);
     if (carouselRef.current) {
       carouselRef.current.style.cursor = "grabbing";
@@ -71,76 +93,96 @@ const Carousel = ({ imageData }: { imageData: A6ImageProps[] }) => {
     if (!element) {
       return;
     } else element.classList.remove("carousel__list--animation");
-    setStartXPos(e.clientX);
+    setStartXPos(event.clientX);
   };
 
-  const dragSlider = (e: any) => {
+  const dragSlider = (event: MouseEvent) => {
     if (pressedState === false) return;
-    let current = e.clientX;
+    let current = event.clientX;
     let newCurrentMouseX = current - startMouseX;
-    console.log(imageData.length);
-    if (offset + extraOffset > 0) {
-      newCurrentMouseX = 0;
-      console.log("LEFT OVERFLOW");
-    } else if (
-      offset + extraOffset <
-      (imageData.length - 1) * -imageWidthValue
-    ) {
-      console.log("RIGHT OVERFLOW");
-    }
+    let newSliderOffset = activeIndex * -imageWidthValue + newCurrentMouseX;
 
+    let modifiedSliderOffset = newSliderOffset;
+
+    if (newSliderOffset > 0) {
+      modifiedSliderOffset = 0;
+    } else if (newSliderOffset < (imageData.length - 1) * -imageWidthValue) {
+      modifiedSliderOffset = (imageData.length - 1) * -imageWidthValue;
+    }
     setCurrentMouseX(newCurrentMouseX);
-    setExtraOffset(newCurrentMouseX);
+    setSliderOffset(modifiedSliderOffset);
   };
 
   const unpressSlider = () => {
+    if (pressedState === false) return;
     if (carouselRef.current) {
       carouselRef.current.style.cursor = "grab";
     }
-    setPressedState(false);
 
+    setPressedState(false);
     const newActiveIndex = Math.round(
       (activeIndex * -imageWidthValue + currentMouseX) / -imageWidthValue
     );
 
+    let newSliderOffset = newActiveIndex * -imageWidthValue + 0;
+
     let element = document.querySelector(".carousel__list");
+
     if (!element) {
       return;
     } else element.classList.add("carousel__list--animation");
 
-    setActiveIndex(newActiveIndex);
-    setOffset(newActiveIndex * -imageWidthValue);
-    setExtraOffset(0);
-    // debugger;
+    if (
+      newSliderOffset > 0 ||
+      newSliderOffset <= imageData.length * -imageWidthValue
+    ) {
+    } else {
+      setSliderOffset(newSliderOffset);
+      setActiveIndex(newActiveIndex);
+    }
   };
 
   const exitSlider = () => {
     if (pressedState === false) return;
+
     setPressedState(false);
     const newActiveIndex = Math.round(
       (activeIndex * -imageWidthValue + currentMouseX) / -imageWidthValue
     );
 
+    let newSliderOffset = newActiveIndex * -imageWidthValue + 0;
+
     let element = document.querySelector(".carousel__list");
+
     if (!element) {
       return;
     } else element.classList.add("carousel__list--animation");
 
-    setActiveIndex(newActiveIndex);
-    setOffset(newActiveIndex * -imageWidthValue);
-    setExtraOffset(0);
+    if (
+      newSliderOffset > 0 ||
+      newSliderOffset <= imageData.length * -imageWidthValue
+    ) {
+    } else {
+      setSliderOffset(newSliderOffset);
+      setActiveIndex(newActiveIndex);
+    }
   };
+
+  const prevButtonState = activeIndex === 0 ? "disabled" : "default";
+
+  const nextButtonState =
+    activeIndex === imageData.length - 1 ? "disabled" : "default";
 
   const buttonsAndStyling: M2ButtonsGroupProps = {
     buttons: [
       {
         text: "PREV",
-        state: "default",
+        state: prevButtonState,
         onClick: () => prevImage(),
       },
       {
         text: "NEXT",
-        state: "default",
+        state: nextButtonState,
         onClick: () => nextImage(),
       },
     ],
@@ -152,8 +194,8 @@ const Carousel = ({ imageData }: { imageData: A6ImageProps[] }) => {
       <div
         className="carousel__container"
         onMouseEnter={enterSlider}
-        onMouseDown={(e) => pressingSlider(e)}
-        onMouseMove={(e) => dragSlider(e)}
+        onMouseDown={(event) => pressingSlider(event)}
+        onMouseMove={(event) => dragSlider(event)}
         onMouseUp={unpressSlider}
         onMouseLeave={exitSlider}
         ref={carouselRef}
@@ -162,7 +204,7 @@ const Carousel = ({ imageData }: { imageData: A6ImageProps[] }) => {
           ref={carouseInnerRef}
           className="carousel__list carousel__list--animation "
           style={{
-            transform: `translate3d(${offset + extraOffset}px, 0,0)`,
+            transform: `translate3d(${sliderOffset}px, 0,0)`,
           }}
         >
           {imageData.map((item) => (
