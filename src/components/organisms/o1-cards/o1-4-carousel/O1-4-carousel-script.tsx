@@ -1,4 +1,5 @@
-import { useState, useRef, useEffect, MouseEvent } from "react";
+import { useState, useRef, useEffect, MouseEvent, useCallback } from "react";
+import { useMount } from "react-use";
 import { debounce } from "lodash";
 import A6Image, { A6ImageProps } from "../../../atoms/a6-image/A6-image";
 import M2ButtonsGroup, {
@@ -14,90 +15,91 @@ const Carousel = ({ imageData }: { imageData: A6ImageProps[] }) => {
   const [sliderOffset, setSliderOffset] = useState(0);
   const [startMouseX, setStartXPos] = useState(0);
   const [currentMouseX, setCurrentMouseX] = useState(0);
+  const [shouldTransistion, setShouldTransistion] = useState(true);
+  const carouselElement = carouselRef.current;
 
-  const toggleTransisationStyling = debounce(() => {
-    console.log(" not resizing debounced");
-    let element = document.querySelector(".carousel__list");
-
-    if (!element) {
-      return;
-    } else element.classList.add("carousel__list--animation");
-  }, 300);
-
-  useEffect(() => {
-    const getImageWidthValue = () => {
-      const carouselElement = carouselRef.current;
-      const carouselInnerElement = carouseInnerRef.current;
-      if (carouselElement && carouselInnerElement) {
-        const width = carouselElement.getBoundingClientRect().width;
-        setImageWidthValue(Number(width.toFixed(2)));
-        setSliderOffset(activeIndex * -Number(width.toFixed(2)));
-      }
-    };
-
-    const handleResize = () => {
-      getImageWidthValue();
-      let element = document.querySelector(".carousel__list");
-
-      if (!element) {
-        return;
-      } else element.classList.remove("carousel__list--animation");
-
-      console.log("resize");
-    };
-
+  useMount(() => {
+    // setTimeout(() => {
+    //   getImageWidthValue();
+    // }, 0);
     getImageWidthValue();
-    window.addEventListener("resize", handleResize);
-    window.addEventListener("resize", toggleTransisationStyling);
+  });
 
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("resize", toggleTransisationStyling);
-    };
+  const toggleTransitionStyling = debounce(() => {
+    setShouldTransistion(true);
+  }, 200);
+
+  const handleResize = useCallback(() => {
+    setShouldTransistion(false);
+  }, [imageWidthValue]);
+
+  const getImageWidthValue = useCallback(() => {
+    console.log(imageWidthValue, "GET IMAGE WIDTH VALUE");
+    const carouselElement = carouselRef.current;
+    const carouselInnerElement = carouseInnerRef.current;
+    if (carouselElement && carouselInnerElement) {
+      const width = carouselElement.getBoundingClientRect().width;
+      setImageWidthValue(Number(width.toFixed(2)));
+    }
   }, [activeIndex]);
 
-  const prevImage = () => {
-    let element = document.querySelector(".carousel__list");
-    if (!element) {
-      return;
-    } else element.classList.add("carousel__list--animation");
+  const triggerSlideshow = useCallback(() => {
+    console.log(imageWidthValue, "TRIGGER SLIDERSHOW");
+    setSliderOffset(activeIndex * -Number(imageWidthValue.toFixed(2)));
+  }, [imageWidthValue, activeIndex]);
+
+  useEffect(() => {
+    const onResize = () => {
+      handleResize(),
+        toggleTransitionStyling(),
+        getImageWidthValue(),
+        triggerSlideshow();
+    };
+
+    window.addEventListener("resize", onResize);
+
+    return () => {
+      window.removeEventListener("resize", onResize);
+    };
+  }, [activeIndex, imageWidthValue]);
+
+  const setIndexandOffset = useCallback(
+    (index: number, offset: number) => {
+      setActiveIndex(index);
+      setSliderOffset(offset);
+    },
+    [activeIndex]
+  );
+
+  const clickPreviousImage = () => {
     let newActiveIndex =
       activeIndex === 0 ? imageData.length - 1 : activeIndex - 1;
-    setActiveIndex(newActiveIndex);
-    setSliderOffset(newActiveIndex * -imageWidthValue);
+    setIndexandOffset(newActiveIndex, newActiveIndex * -imageWidthValue);
   };
 
-  const nextImage = () => {
-    let element = document.querySelector(".carousel__list");
-    if (!element) {
-      return;
-    } else element.classList.add("carousel__list--animation");
+  const clickNextImage = () => {
     let newActiveIndex =
       activeIndex === imageData.length - 1 ? 0 : activeIndex + 1;
-    setActiveIndex(newActiveIndex);
-    setSliderOffset(newActiveIndex * -imageWidthValue);
+    setIndexandOffset(newActiveIndex, newActiveIndex * -imageWidthValue);
   };
 
-  const enterSlider = () => {
+  const enterSlider = useCallback(() => {
     if (carouselRef.current) {
       carouselRef.current.style.cursor = "grab";
     }
-  };
-  const pressingSlider = (event: MouseEvent) => {
+  }, []);
+
+  const pressingSlider = useCallback((event: MouseEvent) => {
     setPressedState(true);
     if (carouselRef.current) {
       carouselRef.current.style.cursor = "grabbing";
     }
-
-    let element = document.querySelector(".carousel__list");
-    if (!element) {
-      return;
-    } else element.classList.remove("carousel__list--animation");
+    setShouldTransistion(false);
     setStartXPos(event.clientX);
-  };
+  }, []);
 
   const dragSlider = (event: MouseEvent) => {
-    if (pressedState === false) return;
+    if (!pressedState) return;
     let current = event.clientX;
     let newCurrentMouseX = current - startMouseX;
     let newSliderOffset = activeIndex * -imageWidthValue + newCurrentMouseX;
@@ -112,13 +114,11 @@ const Carousel = ({ imageData }: { imageData: A6ImageProps[] }) => {
     setCurrentMouseX(newCurrentMouseX);
     setSliderOffset(modifiedSliderOffset);
   };
-
-  const unpressSlider = () => {
-    if (pressedState === false) return;
-    if (carouselRef.current) {
-      carouselRef.current.style.cursor = "grab";
+  const releaseSlider = (carouselElement?: HTMLDivElement | null) => {
+    if (!pressedState) return;
+    if (carouselElement) {
+      carouselElement.style.cursor = "grab";
     }
-
     setPressedState(false);
     const newActiveIndex = Math.round(
       (activeIndex * -imageWidthValue + currentMouseX) / -imageWidthValue
@@ -126,11 +126,7 @@ const Carousel = ({ imageData }: { imageData: A6ImageProps[] }) => {
 
     let newSliderOffset = newActiveIndex * -imageWidthValue + 0;
 
-    let element = document.querySelector(".carousel__list");
-
-    if (!element) {
-      return;
-    } else element.classList.add("carousel__list--animation");
+    setShouldTransistion(true);
 
     if (
       newSliderOffset > 0 ||
@@ -139,32 +135,7 @@ const Carousel = ({ imageData }: { imageData: A6ImageProps[] }) => {
     } else {
       setSliderOffset(newSliderOffset);
       setActiveIndex(newActiveIndex);
-    }
-  };
-
-  const exitSlider = () => {
-    if (pressedState === false) return;
-
-    setPressedState(false);
-    const newActiveIndex = Math.round(
-      (activeIndex * -imageWidthValue + currentMouseX) / -imageWidthValue
-    );
-
-    let newSliderOffset = newActiveIndex * -imageWidthValue + 0;
-
-    let element = document.querySelector(".carousel__list");
-
-    if (!element) {
-      return;
-    } else element.classList.add("carousel__list--animation");
-
-    if (
-      newSliderOffset > 0 ||
-      newSliderOffset <= imageData.length * -imageWidthValue
-    ) {
-    } else {
-      setSliderOffset(newSliderOffset);
-      setActiveIndex(newActiveIndex);
+      setIndexandOffset(newActiveIndex, newSliderOffset);
     }
   };
 
@@ -173,17 +144,20 @@ const Carousel = ({ imageData }: { imageData: A6ImageProps[] }) => {
   const nextButtonState =
     activeIndex === imageData.length - 1 ? "disabled" : "default";
 
+  const transistionStyling =
+    shouldTransistion === true ? "carousel__list--animation" : "";
+
   const buttonsAndStyling: M2ButtonsGroupProps = {
     buttons: [
       {
         text: "PREV",
         state: prevButtonState,
-        onClick: () => prevImage(),
+        onClick: () => clickPreviousImage(),
       },
       {
         text: "NEXT",
         state: nextButtonState,
-        onClick: () => nextImage(),
+        onClick: () => clickNextImage(),
       },
     ],
     styling: "carousel__buttons-group",
@@ -196,13 +170,13 @@ const Carousel = ({ imageData }: { imageData: A6ImageProps[] }) => {
         onMouseEnter={enterSlider}
         onMouseDown={(event) => pressingSlider(event)}
         onMouseMove={(event) => dragSlider(event)}
-        onMouseUp={unpressSlider}
-        onMouseLeave={exitSlider}
+        onMouseUp={() => releaseSlider(carouselElement)}
+        onMouseLeave={() => releaseSlider()}
         ref={carouselRef}
       >
         <ul
           ref={carouseInnerRef}
-          className="carousel__list carousel__list--animation "
+          className={`carousel__list ${transistionStyling} `}
           style={{
             transform: `translate3d(${sliderOffset}px, 0,0)`,
           }}
