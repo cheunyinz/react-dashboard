@@ -1,8 +1,7 @@
 // StopwatchLogic.tsx
 import React, { useEffect, useState, useRef } from "react";
-import M2ButtonsGroup, {
-  M2ButtonsGroupProps,
-} from "../../../molecules/m2-buttons-group/M2-buttons-group";
+import M2ButtonsGroup from "../../../molecules/m2-buttons-group/M2-buttons-group";
+import A4Button from "../../../atoms/a4-button/A4-button";
 
 const StopwatchLogic: React.FC = () => {
   const [milSeconds, setMilSeconds] = useState(0);
@@ -41,7 +40,7 @@ const StopwatchLogic: React.FC = () => {
 
   const updateMiliseconds = () => {
     setMilSeconds((prevMilSeconds) => {
-      const updatedMilSeconds = prevMilSeconds + 1;
+      let updatedMilSeconds = prevMilSeconds + 1;
       if (updatedMilSeconds > 99) {
         updatedMilSeconds = 0;
         updateSeconds();
@@ -52,7 +51,7 @@ const StopwatchLogic: React.FC = () => {
 
   const updateSeconds = () => {
     setSeconds((prevSeconds) => {
-      const updatedSeconds = prevSeconds + 1;
+      let updatedSeconds = prevSeconds + 1;
       if (updatedSeconds > 59) {
         updatedSeconds = 0;
         updateMinutes();
@@ -78,28 +77,6 @@ const StopwatchLogic: React.FC = () => {
   };
 
   // Define the buttons with their handlers, states and IDs
-  const buttons: M2ButtonsGroupProps = {
-    buttons: [
-      {
-        text: "Start",
-        id: "sw-start-btn",
-        state: stopwatchRunning ? "disabled" : "default",
-        onClick: startTimer,
-      },
-      {
-        text: "Stop",
-        id: "sw-stop-btn",
-        state: stopwatchRunning ? "default" : "disabled",
-        onClick: stopTimer,
-      },
-      {
-        text: "Reset",
-        id: "sw-reset-btn",
-        state: stopwatchRunning || milSeconds === 0 ? "disabled" : "default",
-        onClick: resetTimer,
-      },
-    ],
-  };
 
   return (
     <section className="stopwatch">
@@ -108,7 +85,26 @@ const StopwatchLogic: React.FC = () => {
         <span id="sw-sec">{formatTimeValue(seconds)}</span>:
         <span id="sw-milsec">{formatTimeValue(milSeconds)}</span>
       </p>
-      <M2ButtonsGroup {...buttons} />
+      <M2ButtonsGroup>
+        <A4Button
+          text={"Start"}
+          id={"sw-start-btn"}
+          state={stopwatchRunning ? "disabled" : "default"}
+          onClick={() => startTimer()}
+        />
+        <A4Button
+          text={"Stop"}
+          id={"sw-stop-btn"}
+          state={stopwatchRunning ? "default" : "disabled"}
+          onClick={() => stopTimer()}
+        />
+        <A4Button
+          text={"Reset"}
+          id={"sw-reset-btn"}
+          state={stopwatchRunning || milSeconds === 0 ? "disabled" : "default"}
+          onClick={() => resetTimer()}
+        />
+      </M2ButtonsGroup>
     </section>
   );
 };

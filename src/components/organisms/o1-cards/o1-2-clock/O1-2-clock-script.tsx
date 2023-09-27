@@ -1,8 +1,7 @@
 // StopwatchLogic.tsx
 import React, { useState, useRef, useEffect } from "react";
-import M2ButtonsGroup, {
-  M2ButtonsGroupProps,
-} from "../../../molecules/m2-buttons-group/M2-buttons-group";
+import M2ButtonsGroup from "../../../molecules/m2-buttons-group/M2-buttons-group";
+import A4Button from "../../../atoms/a4-button/A4-button";
 
 const ClockLogic: React.FC = () => {
   const [selectedButton, setSelectedButton] = useState<string | null>(null);
@@ -34,36 +33,6 @@ const ClockLogic: React.FC = () => {
     runClockTime(timeZone, timeZoneName);
   };
 
-  const buttons: M2ButtonsGroupProps = {
-    buttons: [
-      {
-        text: "MEX",
-        state: selectedButton === "America/Monterrey" ? "selected" : "default",
-        onClick: () => changeClockButtonState("America/Monterrey", "MEX"),
-      },
-      {
-        text: "NED",
-        state: selectedButton === "Europe/Amsterdam" ? "selected" : "default",
-        onClick: () => changeClockButtonState("Europe/Amsterdam", "NED"),
-      },
-      {
-        text: "LOC",
-        state: selectedButton === "local" ? "selected" : "default",
-        onClick: () => changeClockButtonState("local", "LOC"),
-      },
-      {
-        text: "HKG",
-        state: selectedButton === "Hongkong" ? "selected" : "default",
-        onClick: () => changeClockButtonState("Hongkong", "HKG"),
-      },
-      {
-        text: "KOR",
-        state: selectedButton === "ROK" ? "selected" : "default",
-        onClick: () => changeClockButtonState("ROK", "KOR"),
-      },
-    ],
-  };
-
   useEffect(() => {
     setSelectedButton("local");
     runClockTime("local", "LOC");
@@ -83,7 +52,35 @@ const ClockLogic: React.FC = () => {
         <time className="clock__time">{formattedTime}</time>
         <p className="clock__time-name">{timezoneName}</p>
       </div>
-      <M2ButtonsGroup {...buttons} />
+      <M2ButtonsGroup>
+        <A4Button
+          text={"MEX"}
+          state={
+            selectedButton === "America/Monterrey" ? "selected" : "default"
+          }
+          onClick={() => changeClockButtonState("America/Monterrey", "MEX")}
+        ></A4Button>
+        <A4Button
+          text={"NED"}
+          state={selectedButton === "Europe/Amsterdam" ? "selected" : "default"}
+          onClick={() => changeClockButtonState("Europe/Amsterdam", "NED")}
+        ></A4Button>
+        <A4Button
+          text={"LOC"}
+          state={selectedButton === "local" ? "selected" : "default"}
+          onClick={() => changeClockButtonState("local", "LOC")}
+        ></A4Button>
+        <A4Button
+          text={"HKG"}
+          state={selectedButton === "Hongkong" ? "selected" : "default"}
+          onClick={() => changeClockButtonState("Hongkong", "HKG")}
+        ></A4Button>
+        <A4Button
+          text={"KOR"}
+          state={selectedButton === "ROK" ? "selected" : "default"}
+          onClick={() => changeClockButtonState("ROK", "KOR")}
+        ></A4Button>
+      </M2ButtonsGroup>
     </section>
   );
 };
