@@ -16,7 +16,7 @@ export const O1Carousel: React.FC<O1CarouselProps> = ({
 }) => {
   return (
     <li
-      className="project-card --dev
+      className="project-card
   "
     >
       <M1MetaData {...metaData} />
