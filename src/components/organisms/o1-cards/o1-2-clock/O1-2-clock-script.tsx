@@ -8,7 +8,7 @@ const ClockLogic: React.FC = () => {
   const [selectedButton, setSelectedButton] = useState<string | null>(null);
   const [formattedTime, setFormattedTime] = useState<string>("");
   const [timezoneName, setTimezoneName] = useState<string>("");
-  let clockInterval = useRef<ReturnType<typeof setInterval> | null>(null);
+  const clockInterval = useRef<ReturnType<typeof setInterval> | null>(null);
   const runClockTime = (timeZone: string, timeZoneName: string) => {
     let options: any;
 
@@ -22,8 +22,8 @@ const ClockLogic: React.FC = () => {
     }
 
     clockInterval.current = setInterval(() => {
-      let formattedTime: string = new Date().toLocaleTimeString([], options);
-      let timezoneName: string = timeZoneName;
+      const formattedTime: string = new Date().toLocaleTimeString([], options);
+      const timezoneName: string = timeZoneName;
       setFormattedTime(formattedTime);
       setTimezoneName(timezoneName);
     }, 10);

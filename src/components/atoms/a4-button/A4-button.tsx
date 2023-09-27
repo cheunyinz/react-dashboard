@@ -8,25 +8,11 @@ export type A4ButtonProps = {
   onClick?: () => void;
 };
 
-const A4Button: React.FC<A4ButtonProps> = ({
-  text,
-  id,
-  state,
-  styling,
-  onClick,
-}) => {
-  let btnStateClass = "";
-
-  if (state === "selected") {
-    btnStateClass = "project-card__button--selected";
-  } else if (state === "disabled") {
-    btnStateClass = "project-card__button--disabled";
-  }
-
+const A4Button: React.FC<A4ButtonProps> = ({ text, id, state, onClick }) => {
   return (
     <button
       id={id}
-      className={`project-card__button ${btnStateClass} ${styling}`}
+      className={`project-card__button  project-card__button--${state}`}
       onClick={onClick}
     >
       {text}

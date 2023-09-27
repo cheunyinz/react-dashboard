@@ -2,6 +2,7 @@
   margin-top: 2rem;
   &__container {
     overflow-x: hidden;
+    border-radius: 5px;
   }
   &__list {
     display: flex;
@@ -20,6 +21,6 @@
   }
 
   &__buttons-group {
-    margin-top: 2rem;
+    margin-block-start: 2rem;
   }
 }

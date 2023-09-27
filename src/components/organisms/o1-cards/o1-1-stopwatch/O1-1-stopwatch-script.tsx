@@ -41,7 +41,7 @@ const StopwatchLogic: React.FC = () => {
 
   const updateMiliseconds = () => {
     setMilSeconds((prevMilSeconds) => {
-      let updatedMilSeconds = prevMilSeconds + 1;
+      const updatedMilSeconds = prevMilSeconds + 1;
       if (updatedMilSeconds > 99) {
         updatedMilSeconds = 0;
         updateSeconds();
@@ -52,7 +52,7 @@ const StopwatchLogic: React.FC = () => {
 
   const updateSeconds = () => {
     setSeconds((prevSeconds) => {
-      let updatedSeconds = prevSeconds + 1;
+      const updatedSeconds = prevSeconds + 1;
       if (updatedSeconds > 59) {
         updatedSeconds = 0;
         updateMinutes();

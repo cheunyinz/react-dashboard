@@ -18,6 +18,10 @@ import O1Carousel, {
   O1CarouselProps,
 } from "./components/organisms/o1-cards/o1-4-carousel/O1-4-carousel-card";
 
+import O1GsapCarousel, {
+  O1GsapCarouselProps,
+} from "./components/organisms/o1-cards/o1-5-gsap-carousel/O1-5-gsap-carousel-card";
+
 const App: React.FC = () => {
   const headingMeta: A1HeadingProps = {
     text: "CYZ React Dashboard",
@@ -97,6 +101,38 @@ const App: React.FC = () => {
     ],
   };
 
+  const gsapCarouselMeta: O1GsapCarouselProps = {
+    metaData: {
+      headingText: "GSAP Carousel",
+      headingColor: "blue",
+      headingSize: "small",
+      headingLevel: "h2",
+      alignment: "center",
+      date: "09-2023",
+    },
+
+    imageData: [
+      {
+        src: "../src/images/cities/copenhagen.jpg",
+        alt: "CPH",
+        key: "",
+        draggable: false,
+      },
+      {
+        src: "../src/images/cities/cologne.jpg",
+        alt: "CGN",
+        key: "",
+        draggable: false,
+      },
+      {
+        src: "../src/images/cities/monterrey.jpg",
+        alt: "MTY",
+        key: "",
+        draggable: false,
+      },
+    ],
+  };
+
   return (
     <>
       <header>
@@ -108,6 +144,7 @@ const App: React.FC = () => {
           <O1Clock {...clockMeta} />
           <O1Prices {...pricesMeta} />
           <O1Carousel {...carouselMeta} />
+          <O1GsapCarousel {...gsapCarouselMeta} />
         </ol>
       </main>
     </>
